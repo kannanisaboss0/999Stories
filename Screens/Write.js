@@ -1,10 +1,12 @@
 import *as Permissions from 'expo-permissions'
 import { LOCATION } from 'expo-permissions';
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,} from 'react-native';
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,Alert,} from 'react-native';
 import {Header} from 'react-native-elements'
 import GetLocation from 'react-native-get-location'
 import *as Speech from 'expo-speech'
+import db from '../config'
+import firebase from 'firebase'
 
 export default class Write extends React.Component{
 constructor(){
@@ -18,17 +20,21 @@ constructor(){
         moral:'',
         width:900,
         height:300,
-        title:''
+        title:'',
+        genre:'',
+        count:firebase.firestore.Timestamp.now().toDate().toUTCString()
 
     }
 
 }
-componentDidMount(){
-    
+
+hi=()=>{
+   this.setState({
+    count:firebase.firestore.Timestamp.now().toDate().toUTCString()
+   })
         
            
-        }
-        
+  }        
         
         
 
@@ -204,8 +210,8 @@ value={this.state.moral }
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:this.state.height+425,marginLeft:310,borderWidth:4,borderColor:"red",borderRadius:25,backgroundColor:"black"}} onPress={()=>{
-    Speech.speak(this.state.title+ "By:+this.state.name"
+<TouchableOpacity style={{position:"absolute",marginTop:this.state.height+425,marginLeft:310,borderWidth:2,borderColor:"black",borderRadius:25,backgroundColor:"white"}} onPress={()=>{
+    Speech.speak(this.state.title+ "By:"+this.state.name
 )
     Speech.speak("Introduction,")
     Speech.speak(this.state.brief)
@@ -214,9 +220,107 @@ value={this.state.moral }
     Speech.speak("Moral")
     Speech.speak(this.state.moral)
 }}>
-  <Text style={{fontSize:20,color:"white"}}>Read Complete Story</Text>  
+  <Text style={{fontSize:20,color:"black"}}>Read Complete Story</Text>  
 </TouchableOpacity>
-            </View>
+<TouchableOpacity style={{position:"absolute",marginTop:this.state.height+520,marginLeft:310,borderWidth:2,borderColor:"black",borderRadius:25,backgroundColor:"white",height:30,width:150}} onPress={()=>{
+  db.collection("Stories").add({
+    "Titile":this.state.title,
+    "Author":this.state.name,
+    "Location":this.state.x,
+    "Introduction":this.state.brief,
+    "Story":this.state.change,
+    "Moral(if any)":this.state.moral
+  })
+  db.collection("Statistics").doc("Additions").update({
+ "Total":firebase.firestore.FieldValue.increment(1)
+  })
+ 
+  
+ if(this.state.genre==='Science'){
+   db.collection("Statistics").doc("Genres").update({
+    "Science":firebase.firestore.FieldValue.increment(1)
+   })
+ }
+ if(this.state.genre==='Horror'){
+  db.collection("Statistics").doc("Genres").update({
+   "Horror":firebase.firestore.FieldValue.increment(1)
+  })
+}
+if(this.state.genre==='Adventure'){
+  db.collection("Statistics").doc("Genres").update({
+   "Adventure":firebase.firestore.FieldValue.increment(1)
+  })
+}
+if(this.state.genre==='Life'){
+  db.collection("Statistics").doc("Genres").update({
+   "Life":firebase.firestore.FieldValue.increment(1)
+  })
+}
+if(this.state.genre==='Fiction'){
+  db.collection("Statistics").doc("Genres").update({
+   "Fiction":firebase.firestore.FieldValue.increment(1)
+  })
+}
+if(this.state.genre==='Fable'){
+  db.collection("Statistics").doc("Genres").update({
+   "Fable":firebase.firestore.FieldValue.increment(1)
+  })
+}
+
+ 
+  
+}}>
+ 
+<Text style={{fontSize:20,marginLeft:40,paddingBottom:10}}>Publish</Text>
+
+            
+</TouchableOpacity>
+<TouchableOpacity style={{borderWidth:2,borderColor:"black",borderRadius:25,width:100,height:35,marginTop:this.state.height+475,position:"absolute",marginLeft:300}} onPress={()=>{
+  this.setState({
+    genre:''
+  })
+}}>
+  <Text style={{fontSize:25,marginLeft:17}}>Erase</Text>
+</TouchableOpacity>
+<Text style={{fontSize:15,fontWeight:"bold",marginTop:this.state.height+455,position:"absolute"}}>Genre: </Text>
+<TextInput
+  value={this.state.genre}
+  onChangeText={(gen)=>{
+
+      this.setState({
+        genre:gen
+      })
+      if(this.state.genre==="hor"||this.state.genre==="Hor"){
+        this.setState({
+          genre:'Horror'
+        })
+      }
+      if(this.state.genre==="adv"||this.state.genre==="Adv"){
+        this.setState({
+          genre:'Adventure'
+        })
+      }
+      if(this.state.genre==="fic"||this.state.genre==="Fic"){
+        this.setState({
+          genre:'Fiction'
+        })
+      }
+      if(this.state.genre==="fab"||this.state.genre==="Fab"){
+        this.setState({
+          genre:'Fable'
+        })
+      }
+      if(this.state.genre==="sci"||this.state.genre==="Sci"){
+        this.setState({
+          genre:'Science'
+        })
+      }
+  }}
+  style={{borderWidth:2,borderColor:"black",borderRadius:25,width:300,height:35,marginTop:this.state.height+475,position:"absolute"}}
+  placeHolder="Genre(Eg.Horror,Adventure)"
+  />
+  <Text style={{fontSize:25,marginTop:165}}>Time of upload displayed will be:{this.state.count}</Text>
+</View>
         )
     }
 }
