@@ -1,7 +1,7 @@
 import *as Permissions from 'expo-permissions'
 import { LOCATION } from 'expo-permissions';
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,Alert,} from 'react-native';
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,ToastAndroid,KeyboardAvoidingView,Alert,TouchableWithoutFeedback} from 'react-native';
 import {Header} from 'react-native-elements'
 import GetLocation from 'react-native-get-location'
 import *as Speech from 'expo-speech'
@@ -22,20 +22,20 @@ constructor(){
         height:300,
         title:'',
         genre:'',
-        count:firebase.firestore.Timestamp.now().toDate().toUTCString()
+        count:firebase.firestore.Timestamp.now().toDate().toUTCString(),
+        duration:12
 
     }
 
 }
+componentDidMount(){
+ Alert.alert("Welcome to 999Stories")
+ ToastAndroid.show("You can write a story by pressing the icon on the left",2)
+ ToastAndroid.show("You can read stories by pressing the icon on the right",2)
 
-hi=()=>{
-   this.setState({
-    count:firebase.firestore.Timestamp.now().toDate().toUTCString()
-   })
-        
-           
-  }        
-        
+
+}
+
         
 
 getLocation=()=>{
@@ -58,16 +58,26 @@ getLocation=()=>{
 }
     render(){
         return(
-            <View>
+          <KeyboardAvoidingView
+          
+          behavior={"padding"}
+          enabled
+          >
+            <TouchableWithoutFeedback onPress={()=>{
+              this.setState({
+                duration:0.1
+              })
+            }}>
+            <View >
                 <Header
                 centerComponent={{text:'Write A Story!',style:{fontWeight:"bold"}}}
                 />
                
 <TouchableOpacity style={{borderWidth:2,borderRadius:25,width:200,height:50}} onPress={this.getLocation}>
-<Text style={{marginLeft:25,fontSize:20,marginTop:7}}>Access Location</Text>
+          <Text style={{marginLeft:25,fontSize:20,marginTop:7}}>Access Location</Text>
     
 </TouchableOpacity>
-<Text style={{fontSize:15,fontWeight:"bold"}}>Title:</Text>
+<Text  style={{fontSize:15,fontWeight:"bold"}}>Title:</Text>
 <TextInput
 placeholder="Your Title"
 style={{borderWidth:2,borderColor:"black",borderRadius:25,width:300,height:35}}
@@ -223,6 +233,8 @@ value={this.state.moral }
   <Text style={{fontSize:20,color:"black"}}>Read Complete Story</Text>  
 </TouchableOpacity>
 <TouchableOpacity style={{position:"absolute",marginTop:this.state.height+520,marginLeft:310,borderWidth:2,borderColor:"black",borderRadius:25,backgroundColor:"white",height:30,width:150}} onPress={()=>{
+  
+ ToastAndroid.showWithGravity(this.state.title+"has been submitted!",this.state.duration)
   db.collection("Stories").add({
     "Titile":this.state.title,
     "Author":this.state.name,
@@ -284,6 +296,7 @@ if(this.state.genre==='Fable'){
 </TouchableOpacity>
 <Text style={{fontSize:15,fontWeight:"bold",marginTop:this.state.height+455,position:"absolute"}}>Genre: </Text>
 <TextInput
+
   value={this.state.genre}
   onChangeText={(gen)=>{
 
@@ -321,6 +334,9 @@ if(this.state.genre==='Fable'){
   />
   <Text style={{fontSize:25,marginTop:165}}>Time of upload displayed will be:{this.state.count}</Text>
 </View>
+</TouchableWithoutFeedback>
+</KeyboardAvoidingView>
+
         )
     }
 }
