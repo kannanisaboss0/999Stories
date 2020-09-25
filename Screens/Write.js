@@ -30,8 +30,8 @@ constructor(){
 }
 componentDidMount(){
  Alert.alert("Welcome to 999Stories")
- ToastAndroid.show("You can write a story by pressing the icon on the left",2)
- ToastAndroid.show("You can read stories by pressing the icon on the right",2)
+// ToastAndroid.show("You can write a story by pressing the icon on the left",2)
+ //ToastAndroid.show("You can read stories by pressing the icon on the right",2)
 
 
 }
@@ -234,7 +234,7 @@ value={this.state.moral }
 </TouchableOpacity>
 <TouchableOpacity style={{position:"absolute",marginTop:this.state.height+520,marginLeft:310,borderWidth:2,borderColor:"black",borderRadius:25,backgroundColor:"white",height:30,width:150}} onPress={()=>{
   
- ToastAndroid.showWithGravity(this.state.title+"has been submitted!",this.state.duration)
+ //ToastAndroid.showWithGravity(this.state.title+"has been submitted!",this.state.duration)
   db.collection("Stories").add({
     "Titile":this.state.title,
     "Author":this.state.name,
@@ -296,7 +296,7 @@ if(this.state.genre==='Fable'){
 </TouchableOpacity>
 <Text style={{fontSize:15,fontWeight:"bold",marginTop:this.state.height+455,position:"absolute"}}>Genre: </Text>
 <TextInput
-
+placeholder="Enter genre"
   value={this.state.genre}
   onChangeText={(gen)=>{
 

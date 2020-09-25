@@ -12,7 +12,7 @@ export default class Read extends React.Component{
         this.state={
             count:'',
             text:'',
-            all:''
+            all: db.collection("Stories").doc("Jack").get()
         }
         
     }
@@ -25,20 +25,24 @@ export default class Read extends React.Component{
            
       })
     }
-retrieveStories=async()=>{
-    const Stories=await db.collection("Strories").get()
-    Stories.docs.map((doc)=>{
-        this.setState({
-            all:doc.data()
-        })
-    })
-}
+retrieveStories=async(text)=>{
+    await  db.collection("Statisctics").doc("Additions").get().then((doc)=>{
+        text=doc.data()
+        
+   })
+       this.setState({
+           all:text
+       })
+    
+        
+    }
+
 searchFilter=async()=>{
     const FilteredStories=await db.collection("Stories").where("title","==",this.state.text).get()
-this.state.all.push(FilteredStories)
+
 }  
 
-            
+          
    
     
     render(){
@@ -52,19 +56,21 @@ this.state.all.push(FilteredStories)
                 }} style={{fontSize:25}}>Your country's time:{this.state.count}{this.count}</Text>
                 <SearchBar
                 value={this.state.text}
+                
                 spellCheck={true}
                blurOnSubmit={true}
                
                 onChangeText={(c)=>{
                     this.setState({
-                   
+                        
                         text:c
                     })
                 }
                 }
                 />
                 <TouchableOpacity onPress={()=>{
-                  this.retrieveStories
+                  this.retrieveStories(this.state.text)
+                  console.log(this.state.all)
                    
                    
 
@@ -74,12 +80,15 @@ this.state.all.push(FilteredStories)
                 }}>
                     <Text>Search</Text>
                 </TouchableOpacity>
-                <FlatList data={this.state.all} renderItem={({item})=>(
-                    <Text>{item}</Text>
-                )}>
+                <FlatList data={this.state.all} renderItem={({item,index})=>(
+                <Text>{index+""+item.Total}</Text>
+            )}
+            
+            >
 
 
-                </FlatList>
+            </FlatList>
+               
             </View>
         )
     }

@@ -1,10 +1,12 @@
 
 import React from 'react';
 import { StyleSheet, Text, View,Image } from 'react-native';
-import {createAppContainer} from 'react-navigation'
+import {createAppContainer,createSwitchNavigator} from 'react-navigation'
 import {createBottomTabNavigator} from 'react-navigation-tabs'
 import Read from './Screens/Read.js'
 import Write from './Screens/Write.js'
+import Login from './Screens/LoginScreen'
+import Resort from './Screens/ResortScreen'
 
 
 
@@ -56,7 +58,12 @@ defaultNavigationOptions:({navigation})=>({
 
 
 })
-const AppContainer =createAppContainer(TabNavigator)
+const Navigator=createSwitchNavigator({
+Login:{screen:Login},
+Out:{screen:Resort},
+TabNavigator:{screen:TabNavigator}
+})
+const AppContainer =createAppContainer(Navigator,TabNavigator)
 const styles = StyleSheet.create({
   container: {
     flex: 1,
