@@ -14,7 +14,7 @@ import db from '../config.js'
 
 export default class A extends React.Component {
     constructor(){
-      super();
+      super()
       this.state = {
         hasCameraPermissions: null,
         scanned: false,

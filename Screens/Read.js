@@ -1,7 +1,7 @@
 import *as Permissions from 'expo-permissions'
 import React, { forwardRef } from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,ToastAndroid,KeyboardAvoidingView,Alert,FlatList,} from 'react-native';
-import {Header,SearchBar} from 'react-native-elements'
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,ToastAndroid,KeyboardAvoidingView,Alert,FlatList,ScrollView} from 'react-native';
+import {Header,SearchBar,ListItem,Card} from 'react-native-elements'
 import GetLocation from 'react-native-get-location'
 import *as Speech from 'expo-speech'
 import db from '../config'
@@ -12,84 +12,88 @@ export default class Read extends React.Component{
         this.state={
             count:'',
             text:'',
-            all: db.collection("Stories").doc("Jack").get()
+            AllStories:[],
+            trans:'',
+            cardVisible:false,
+            story:'',
+            moral:'',
+            title:'',
+            by:''
         }
-        
+        this.requestStories=null
     }
-    
+    getAllStroies=()=>{
+        db.collection("Stories").onSnapshot((snapshot)=>{
+   var AllStories=snapshot.docs.map(document=>
+    document.data()
+    )
+    this.setState({
+        AllStories:AllStories
+    })
+    })
+}
+    renderItem=({item,i})=>{
+        return(
+            <ListItem
+            key={i}
+            rightSubtitle={item.Date}
+            title={item.Title}
+            rightTitle={"By: "+item.Author}
+            subtitle={item.Introduction}
+            leftAvatar={
+                <Text style={{fontWeight:"bold",color:"red",}}>{item.Genre}</Text>
+            }
+            bottomDivider
+            rightElement={
+                <TouchableOpacity onPress={()=>{
+                    this.setState({
+                        story:item.Story,
+                        by:item.Author,
+                        title:item.Title,
+                        moral:item.Moral ,
+                        cardVisible:true
+                    })
+                }} style={{borderWidth:2,borderColor:"black"}}>
+                    <Text style={{alignSelf:"center",color:"red"}}>Read Story</Text>
+                </TouchableOpacity>
+            }
+
+            />
+        )
+    }
     componentDidMount(){
-     Permissions.askAsync(Permissions.LOCATION)
- 
-  this.setState({
-      count:firebase.firestore.Timestamp.now().toDate().toTimeString()
-           
-      })
+this.requestStories=this.getAllStroies()
     }
-retrieveStories=async(text)=>{
-    await  db.collection("Statisctics").doc("Additions").get().then((doc)=>{
-        text=doc.data()
-        
-   })
-       this.setState({
-           all:text
-       })
-    
-        
-    }
-
-searchFilter=async()=>{
-    const FilteredStories=await db.collection("Stories").where("title","==",this.state.text).get()
-
-}  
-
-          
-   
-    
     render(){
         return(
-            <View>
-                <Header
-                centerComponent={{text:'Bored?Read Something!',style:{fontWeight:"bold"}}}
-                />
-                <Text onPress={()=>{
-                    this.getTotalStories
-                }} style={{fontSize:25}}>Your country's time:{this.state.count}{this.count}</Text>
-                <SearchBar
-                value={this.state.text}
-                
-                spellCheck={true}
-               blurOnSubmit={true}
-               
-                onChangeText={(c)=>{
-                    this.setState({
-                        
-                        text:c
-                    })
-                }
-                }
-                />
-                <TouchableOpacity onPress={()=>{
-                  this.retrieveStories(this.state.text)
-                  console.log(this.state.all)
-                   
-                   
-
-                   
-
-                   
+        <View>
+                 
+            <FlatList data={this.state.AllStories} renderItem={this.renderItem} keyExtractor={(item,index)=>{
+                    index.toString()
                 }}>
-                    <Text>Search</Text>
-                </TouchableOpacity>
-                <FlatList data={this.state.all} renderItem={({item,index})=>(
-                <Text>{index+""+item.Total}</Text>
-            )}
-            
-            >
-
-
+                   
+                  
             </FlatList>
-               
-            </View>
+               {this.state.cardVisible===true?
+                <Card title="The Story"titleStyle={{fontWeight:"bold",fontSize:32}} containerStyle={{width:"50%",height:500,alignSelf:"center",position:"absolute"}}>
+                <ScrollView>
+                    <TouchableOpacity onPress={()=>{
+                        this.setState({
+                            cardVisible:false
+                        })
+                    }} style={{marginLeft:"97%",borderWidth:2}}>
+                        <Text style={{fontWeight:"bold",fontSize:25,alignSelf:"center"}}>X</Text>
+                    </TouchableOpacity>
+                    <Text style={{fontWeight:"bold",color:"red",alignSelf:"center",fontSize:32}}>{this.state.title}</Text>
+                    <Text style={{fontSize:25,alignSelf:"center"}}> By:{this.state.by} </Text>
+                    <Text style={{fontSize:20,alignSelf:"center"}}>{this.state.story} </Text>
+                    <Text style={{fontWeight:"bold",fontSize:22}}>Moral:"{this.state.moral}"</Text>
+                </ScrollView>
+            </Card>:
+            null} 
+           
+                
+        </View>
         )
     }
 }

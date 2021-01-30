@@ -1,12 +1,13 @@
 import *as Permissions from 'expo-permissions'
 import { LOCATION } from 'expo-permissions';
 import React from 'react';
-import { StyleSheet, Text, View,TextInput,TouchableOpacity,ToastAndroid,KeyboardAvoidingView,Alert,TouchableWithoutFeedback} from 'react-native';
+import { StyleSheet, Text, View,TextInput,TouchableOpacity,ToastAndroid,KeyboardAvoidingView,Alert,TouchableWithoutFeedback,ScrollView} from 'react-native';
 import {Header} from 'react-native-elements'
 import GetLocation from 'react-native-get-location'
 import *as Speech from 'expo-speech'
 import db from '../config'
 import firebase from 'firebase'
+import DropDownPicker from 'react-native-dropdown-picker'
 
 export default class Write extends React.Component{
 constructor(){
@@ -58,25 +59,15 @@ getLocation=()=>{
 }
     render(){
         return(
+          <ScrollView>
           <KeyboardAvoidingView
           
           behavior={"padding"}
           enabled
           >
-            <TouchableWithoutFeedback onPress={()=>{
-              this.setState({
-                duration:0.1
-              })
-            }}>
-            <View >
-                <Header
-                centerComponent={{text:'Write A Story!',style:{fontWeight:"bold"}}}
-                />
+           
                
-<TouchableOpacity style={{borderWidth:2,borderRadius:25,width:200,height:50}} onPress={this.getLocation}>
-          <Text style={{marginLeft:25,fontSize:20,marginTop:7}}>Access Location</Text>
-    
-</TouchableOpacity>
+
 <Text  style={{fontSize:15,fontWeight:"bold"}}>Title:</Text>
 <TextInput
 placeholder="Your Title"
@@ -190,32 +181,32 @@ value={this.state.moral }
 }}>
 <Text>Retreat Height</Text>
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:375,marginLeft:this.state.width+10,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
+<TouchableOpacity style={{position:"absolute",marginTop:345,marginLeft:this.state.width+10,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
     Speech.speak(this.state.change)
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:280,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
+<TouchableOpacity style={{marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25,marginTop:185,position:"absolute"}} onPress={()=>{
     Speech.speak(this.state.brief)
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:225,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
+<TouchableOpacity style={{position:"absolute",marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25,marginTop:130}} onPress={()=>{
     Speech.speak(this.state.name)
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:173,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
+<TouchableOpacity style={{position:"absolute",marginTop:75,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
     Speech.speak(this.state.x)
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:this.state.height+355,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
+<TouchableOpacity style={{position:"absolute",marginTop:this.state.height+260,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
     Speech.speak(this.state.moral)
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
 </TouchableOpacity>
-<TouchableOpacity style={{position:"absolute",marginTop:115,marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25}} onPress={()=>{
+<TouchableOpacity style={{position:"absolute",marginLeft:310,borderWidth:2,borderColor:"red",borderRadius:25,marginTop:20}} onPress={()=>{
     Speech.speak(this.state.title)
 }}>
   <Text style={{fontSize:20}}>Read</Text>  
@@ -236,12 +227,14 @@ value={this.state.moral }
   
  //ToastAndroid.showWithGravity(this.state.title+"has been submitted!",this.state.duration)
   db.collection("Stories").add({
-    "Titile":this.state.title,
+    "Title":this.state.title,
     "Author":this.state.name,
     "Location":this.state.x,
     "Introduction":this.state.brief,
     "Story":this.state.change,
-    "Moral(if any)":this.state.moral
+    "Moral":this.state.moral,
+    "Date":this.state.count,
+    "Genre":this.state.genre
   })
   db.collection("Statistics").doc("Additions").update({
  "Total":firebase.firestore.FieldValue.increment(1)
@@ -277,8 +270,14 @@ if(this.state.genre==='Fable'){
   db.collection("Statistics").doc("Genres").update({
    "Fable":firebase.firestore.FieldValue.increment(1)
   })
+  
 }
-
+if(this.state.genre==='Thriller'){
+  db.collection('Statistics').doc("Genres").update({
+    "Thriller":firebase.firestore.FieldValue.increment(1)
+  })
+}
+this.props.navigation.navigate("Read",{heading:this.state.title})
  
   
 }}>
@@ -287,56 +286,34 @@ if(this.state.genre==='Fable'){
 
             
 </TouchableOpacity>
-<TouchableOpacity style={{borderWidth:2,borderColor:"black",borderRadius:25,width:100,height:35,marginTop:this.state.height+475,position:"absolute",marginLeft:300}} onPress={()=>{
-  this.setState({
-    genre:''
-  })
-}}>
-  <Text style={{fontSize:25,marginLeft:17}}>Erase</Text>
-</TouchableOpacity>
-<Text style={{fontSize:15,fontWeight:"bold",marginTop:this.state.height+455,position:"absolute"}}>Genre: </Text>
-<TextInput
-placeholder="Enter genre"
-  value={this.state.genre}
-  onChangeText={(gen)=>{
 
-      this.setState({
-        genre:gen
-      })
-      if(this.state.genre==="hor"||this.state.genre==="Hor"){
+
+
+<Text style={{fontSize:15,fontWeight:"bold",marginTop:this.state.height+300,position:"absolute"}}>Genre: </Text>
+
+  
+  <DropDownPicker items={[
+      {label:'Horror',value:'Horror'},
+      {label:'Thriller',value:'Thriller'},
+      {label:'Science',value:'Science'},
+      {label:'Adventure',value:'Adventure'},
+      {label:'Fiction',value:'Fiction'},
+      {label:'Fable',value:'Fable'}
+    ]}
+    activeItemStyle={{backgroundColor:"red"}}
+   style={{ marginTop:30,position:"absolute",width:250}}
+      placeholder="Choose your genre"
+      onChangeItem={(item)=>{
         this.setState({
-          genre:'Horror'
+          genre:item.value
         })
-      }
-      if(this.state.genre==="adv"||this.state.genre==="Adv"){
-        this.setState({
-          genre:'Adventure'
-        })
-      }
-      if(this.state.genre==="fic"||this.state.genre==="Fic"){
-        this.setState({
-          genre:'Fiction'
-        })
-      }
-      if(this.state.genre==="fab"||this.state.genre==="Fab"){
-        this.setState({
-          genre:'Fable'
-        })
-      }
-      if(this.state.genre==="sci"||this.state.genre==="Sci"){
-        this.setState({
-          genre:'Science'
-        })
-      }
-  }}
-  style={{borderWidth:2,borderColor:"black",borderRadius:25,width:300,height:35,marginTop:this.state.height+475,position:"absolute"}}
-  placeHolder="Genre(Eg.Horror,Adventure)"
-  />
+      }}
+  >
+
+  </DropDownPicker>
   <Text style={{fontSize:25,marginTop:165}}>Time of upload displayed will be:{this.state.count}</Text>
-</View>
-</TouchableWithoutFeedback>
 </KeyboardAvoidingView>
-
+</ScrollView>
         )
     }
 }

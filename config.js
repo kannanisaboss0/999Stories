@@ -3,15 +3,15 @@ import firebase from 'firebase'
 require("@firebase/firestore")
 
 
-    var firebaseConfig = {
-        apiKey: "AIzaSyAbyb8OQ6oekVt6ywJXxiGqn7P3Ay-Aa60",
-        authDomain: "stories-firestore.firebaseapp.com",
-        databaseURL: "https://stories-firestore.firebaseio.com",
-        projectId: "stories-firestore",
-        storageBucket: "stories-firestore.appspot.com",
-        messagingSenderId: "1052601204356",
-        appId: "1:1052601204356:web:fc9d12d9adf2c8aeb88cd1",
-        measurementId: "G-DM2PCELD2R"
-      }
+var firebaseConfig = {
+  apiKey: "AIzaSyCn4MdN4oxUgZ77h5SFtZwuDmYy4eUYSHM",
+  authDomain: "stories-7185b.firebaseapp.com",
+  projectId: "stories-7185b",
+  storageBucket: "stories-7185b.appspot.com",
+  messagingSenderId: "258659002746",
+  appId: "1:258659002746:web:d7b80e446206e17b0b4ec3",
+  measurementId: "G-6DSP43T9ER"
+};
       firebase.initializeApp(firebaseConfig);
+      firebase.analytics()
       export default firebase.firestore();

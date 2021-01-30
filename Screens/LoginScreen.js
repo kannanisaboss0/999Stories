@@ -8,6 +8,7 @@ import *as Speech from 'expo-speech'
 import db from '../config'
 import firebase from 'firebase'
 import {Switch} from 'react-native-switch'
+import DropDownPicker from 'react-native-dropdown-picker'
 
 export default class Login extends React.Component{
     constructor(){
@@ -80,59 +81,9 @@ export default class Login extends React.Component{
                     })
                 }}
                 />
-                <Text style={{marginLeft:900,position:"absolute",marginTop:600}}>Do you want to read or write?</Text>
-                <TouchableOpacity  style={{marginLeft:900,position:"absolute",marginTop:800}}>
-                    <Image
-                    style={{height:150,width:150,marginBottom:50,marginRight:50}}
-                    source={require("../assets/"+this.state.imageSet+".png")}
-                    />
-                <Switch
-                value={this.state.setSwitch}
-                
-                onValueChange={()=>{
-                    if(this.state.setSwitch===this.state.setsecSwitch){
-                        this.setState({
-                            setScreen:"Read"
-                        })
-                    }
-                   
-                    this.setState({
-                
-                    setScreen:"Write",
-                    setSwitch:!this.state.setSwitch,
-                    setsecSwitch:this.state.setSwitch,
-                    imageSet:"write"
-                   
-                })}}
-                activeText={this.state.setScreen}
-                inActiveText=""
-                              
-                
-                />
-                <Switch
-                value={this.state.setsecSwitch}
-                
-                onValueChange={()=>{
-                    if(this.state.setsecSwitch===this.state.setSwitch){
-                        this.setState({
-                            setScreen:"Write"
-                        })
-                    }
-                   
-                    this.setState({
-                        
-                    setScreen:"Read",
-                    setsecSwitch:!this.state.setsecSwitch,
-                    setSwitch:this.state.setsecSwitch,
-                    imageSet:"read"
-                   
-                })}}
-                activeText={this.state.setScreen}
-                inActiveText=""
-                              
-                
-                />
-                 </TouchableOpacity>
+           
+
+              
                 <TextInput
                 placeholder="Your email's password"
                 value={this.state.password}
@@ -145,7 +96,7 @@ export default class Login extends React.Component{
                 }}
                 />
                
-                <TouchableOpacity style={{position:"absolute",marginTop:500,marginLeft:875,borderWidth:3,}} onPress={()=>{
+                <TouchableOpacity style={{position:"absolute",marginTop:500,marginLeft:900,borderWidth:3,}} onPress={()=>{
                     if(this.state.triesLeft>0){
                     this.loginAuthentication(this.state.gmail,this.state.password)
                     }
@@ -154,7 +105,7 @@ export default class Login extends React.Component{
                     }
                 }}>
                     <Text style={{fontSize:32}}>
-                       Login {this.state.setScreen}
+                       Login 
                     </Text>
                 </TouchableOpacity>
 
