@@ -60,6 +60,10 @@ getLocation=()=>{
     render(){
         return(
           <ScrollView>
+          <Header
+                 centerComponent={{text:'Write A Story And Express Your Imagination!', style:{fontWeight:"bold"}}}
+                 />
+        
           <KeyboardAvoidingView
           
           behavior={"padding"}

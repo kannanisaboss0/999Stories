@@ -67,7 +67,9 @@ this.requestStories=this.getAllStroies()
     render(){
         return(
         <View>
-                 
+                 <Header
+                 centerComponent={{text:'Read A Story And Get Inspired!', style:{fontWeight:"bold"}}}
+                 />
             <FlatList data={this.state.AllStories} renderItem={this.renderItem} keyExtractor={(item,index)=>{
                     index.toString()
                 }}>
